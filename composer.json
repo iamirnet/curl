@@ -1,7 +1,8 @@
 {
     "name": "iamirnet/curl",
     "description": "Curl class for PHP",
-    "type": "php package",
+    "keywords": ["curl", "http query", "http request"],
+    "homepage": "https://php.iamir.net/packages/curl",
     "license": "MIT",
     "authors": [
         {
@@ -10,9 +11,6 @@
         }
     ],
     "autoload": {
-        "classmap": [
-            "src"
-        ],
         "psr-4": {
             "iAmirNet\\Curl\\": "src/"
         },
