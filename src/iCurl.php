@@ -33,7 +33,7 @@ class iCurl
         if (curl_errno($curl))
             return ['status' => false, 'code' => -100, 'message' => curl_error($curl)];
         elseif(($http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE)) !== 200)
-            return ['status' => false, 'code' => "H_".$http_code, 'message' => curl_error($curl)];
+            return ['status' => false, 'code' => "h_".$http_code, 'message' => curl_error($curl)];
         curl_close($curl);
         return $output;
     }
