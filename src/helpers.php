@@ -45,3 +45,19 @@ if ( !function_exists('i_curl_put'))
         return \iAmirNet\Curl\iCurl::request($base, $url, $params, $data, $headers, "PUT", $options);
     }
 }
+
+if ( !function_exists('i_curl_dl'))
+{
+    function i_curl_dl(string $base, string $url,string $out, array $params = [], $data = null, array $headers = [], string $method = 'GET', array $options = [])
+    {
+        return \iAmirNet\Curl\iCurl::download($base, $url, $out, $params, $data, $headers, $method, $options);
+    }
+}
+
+if ( !function_exists('i_curl_exists'))
+{
+    function i_curl_exists(string $base, string $url = '')
+    {
+        return \iAmirNet\Curl\iCurl::exists($base . $url);
+    }
+}
