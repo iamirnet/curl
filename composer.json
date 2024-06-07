@@ -1,0 +1,25 @@
+{
+    "name": "iamirnet/curl",
+    "description": "Curl class for PHP",
+    "type": "php package",
+    "license": "MIT",
+    "authors": [
+        {
+            "name" : "iamirnet",
+            "email" : "me@iamir.net"
+        }
+    ],
+    "autoload": {
+        "classmap": [
+            "src"
+        ],
+        "psr-4": {
+            "iAmirNet\\Curl\\": "src/"
+        },
+        "files": [
+            "src/helpers.php"
+        ]
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
