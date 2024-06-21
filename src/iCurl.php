@@ -9,16 +9,37 @@ namespace iAmirNet\Curl;
 
 class iCurl
 {
+    public static function headers2Array($header) {
+        $headers = array();
+
+        // هر خط هدر را جدا کنید
+        $lines = explode("\r\n", $header);
+
+        // اولین خط پاسخ HTTP است (مثلاً HTTP/1.1 200 OK)
+        $headers['http_status'] = array_shift($lines);
+
+        // هر خط هدر را به نام و مقدار تقسیم کنید
+        foreach ($lines as $line) {
+            if (!empty($line)) {
+                list($key, $value) = explode(': ', $line, 2);
+                $headers[$key] = $value;
+            }
+        }
+
+        return $headers;
+    }
+
     private static function endpoint(string $url, array $params = []): string
     {
         return count($params) ? ("{$url}?" . http_build_query($params, '', '&')) : $url;
     }
-    
+
     private static function init(string $url, array $headers, array $options)
     {
         $curl = curl_init();
         unset($options['CURl_I_TYPE']);
         curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_HEADER, true);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
@@ -29,13 +50,19 @@ class iCurl
 
     private static function execute($curl, $options = [])
     {
-        $output = curl_exec($curl);
+        $response = curl_exec($curl);
+        $request_info = curl_getinfo($curl);
+        $header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
+        $headers = static::headers2Array(substr($response, 0, $header_size));
+        $output = substr($response, $header_size);
+        if (@$headers['content-encoding'] == "gzip")
+            $output = zlib_decode($output);
         if (curl_errno($curl))
             return ['status' => false, 'code' => -100, 'message' => curl_error($curl)];
         elseif(($http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE)) !== 200)
             return ['status' => false, 'code' => "h_".$http_code, 'message' => curl_error($curl)];
         curl_close($curl);
-        return $output;
+        return [$output, $headers, $request_info, $options];
     }
 
     public static function post(string $url, array $params = [], $data = null, array $headers = [], array $options = [])
@@ -50,13 +77,13 @@ class iCurl
     {
         return static::execute(static::init(static::endpoint($url, $params), $headers, $options), $options);
     }
-    
+
     public static function delete(string $url, array $params = [], $data = [], array $headers = [], array $options = [])
     {
         return static::other('DELETE', ...func_num_args());
     }
 
-    
+
     public static function put(string $url, array $params = [], $data = [], array $headers = [], array $options = [])
     {
         return static::other('PUT', ...func_num_args());
@@ -94,12 +121,13 @@ class iCurl
         return !(!$file_headers || strpos($file_headers[0], '404') !== false);
     }
 
-    public static function json_decode($string)
+    public static function json_decode($respone)
     {
+        list($string, $headers, $info, $options) = $respone;
         if (!$string || is_array($string))
             return $string;
         $output = json_decode($string, true);
-        return ['status' => true, 'result' => (json_last_error() === JSON_ERROR_NONE) ? $output : $string];
+        return ['status' => true, 'headers' => $headers, 'request' => $info, 'result' => (json_last_error() === JSON_ERROR_NONE) ? $output : $string];
     }
 
     public static function request(string $base, string $url, array $params = [], $data = null, array $headers = [], string $method = 'GET', array $options = [], $json = true)
