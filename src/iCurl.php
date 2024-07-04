@@ -10,22 +10,15 @@ namespace iAmirNet\Curl;
 class iCurl
 {
     public static function headers2Array($header) {
-        $headers = array();
-
-        // هر خط هدر را جدا کنید
+        $headers = [];
         $lines = explode("\r\n", $header);
-
-        // اولین خط پاسخ HTTP است (مثلاً HTTP/1.1 200 OK)
         $headers['http_status'] = array_shift($lines);
-
-        // هر خط هدر را به نام و مقدار تقسیم کنید
         foreach ($lines as $line) {
             if (!empty($line)) {
                 list($key, $value) = explode(': ', $line, 2);
                 $headers[$key] = $value;
             }
         }
-
         return $headers;
     }
 
@@ -82,7 +75,6 @@ class iCurl
     {
         return static::other('DELETE', ...func_num_args());
     }
-
 
     public static function put(string $url, array $params = [], $data = [], array $headers = [], array $options = [])
     {
