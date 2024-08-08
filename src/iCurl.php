@@ -10,15 +10,22 @@ namespace iAmirNet\Curl;
 class iCurl
 {
     public static function headers2Array($header) {
-        $headers = [];
+        $headers = array();
+
+        // هر خط هدر را جدا کنید
         $lines = explode("\r\n", $header);
+
+        // اولین خط پاسخ HTTP است (مثلاً HTTP/1.1 200 OK)
         $headers['http_status'] = array_shift($lines);
+
+        // هر خط هدر را به نام و مقدار تقسیم کنید
         foreach ($lines as $line) {
             if (!empty($line)) {
                 list($key, $value) = explode(': ', $line, 2);
                 $headers[$key] = $value;
             }
         }
+
         return $headers;
     }
 
@@ -76,6 +83,7 @@ class iCurl
         return static::other('DELETE', ...func_num_args());
     }
 
+
     public static function put(string $url, array $params = [], $data = [], array $headers = [], array $options = [])
     {
         return static::other('PUT', ...func_num_args());
@@ -92,13 +100,16 @@ class iCurl
     public static function download(string $base, string $url, string $out, array $params = [], $data = null, array $headers = [], string $method = 'GET', array $options = [])
     {
         $fp = fopen($out, 'w+');
-        $result = static::request($base, $url, $params, $data, $headers, $method, array_merge([
+        $options_all = [
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_COOKIEFILE => '',
             CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2 GTB5',
             CURLOPT_FILE => $fp,
             'CURl_I_TYPE' => "FILE",
-        ], $options), false);
+        ];
+        foreach ($options as $index => $option)
+            $options_all[$index] = $option;
+        $result = static::request($base, $url, $params, $data, $headers, $method, $options_all, false);
         if (is_array($result) && isset($result['status']) && !$result['status']) {
             if (file_exists($out)) unlink($out);
             return $result;
