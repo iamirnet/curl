@@ -11,21 +11,14 @@ class iCurl
 {
     public static function headers2Array($header) {
         $headers = array();
-
-        // هر خط هدر را جدا کنید
         $lines = explode("\r\n", $header);
-
-        // اولین خط پاسخ HTTP است (مثلاً HTTP/1.1 200 OK)
         $headers['http_status'] = array_shift($lines);
-
-        // هر خط هدر را به نام و مقدار تقسیم کنید
         foreach ($lines as $line) {
             if (!empty($line)) {
                 list($key, $value) = explode(': ', $line, 2);
                 $headers[$key] = $value;
             }
         }
-
         return $headers;
     }
 
@@ -124,9 +117,9 @@ class iCurl
         return !(!$file_headers || strpos($file_headers[0], '404') !== false);
     }
 
-    public static function json_decode($respone)
+    public static function json_decode($response)
     {
-        list($string, $headers, $info, $options) = $respone;
+        list($string, $headers, $info, $options) = $response;
         if (!$string || is_array($string))
             return $string;
         $output = json_decode($string, true);
