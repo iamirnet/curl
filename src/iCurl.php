@@ -50,12 +50,15 @@ class iCurl
         $output = substr($response, $header_size);
         if (@$headers['content-encoding'] == "gzip")
             $output = zlib_decode($output);
+        $result['headers'] = $headers;
+        $result['request'] = $request_info;
+        $result['options'] = $options;
         if (curl_errno($curl))
-            return ['status' => false, 'code' => -100, 'message' => curl_error($curl)];
+            return array_merge(['status' => false, 'code' => -100, 'message' => curl_error($curl)], $result);
         elseif(($http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE)) !== 200)
-            return ['status' => false, 'code' => "h_".$http_code, 'message' => curl_error($curl)];
+            return array_merge(['status' => false, 'code' => "h_".$http_code, 'message' => curl_error($curl)], $result);
         curl_close($curl);
-        return [$output, $headers, $request_info, $options];
+        return array_merge(['status' => true, 'code' => 200, 'message' => 'The operation was successful.', 'response' => static::json_decode($output)], $result);
     }
 
     public static function post(string $url, array $params = [], $data = null, array $headers = [], array $options = [])
@@ -119,14 +122,17 @@ class iCurl
 
     public static function json_decode($response)
     {
-        list($string, $headers, $info, $options) = $response;
-        if (!$string || is_array($string))
-            return $string;
-        $output = json_decode($string, true);
-        return ['status' => true, 'headers' => $headers, 'request' => $info, 'result' => (json_last_error() === JSON_ERROR_NONE) ? $output : $string];
+        $output = json_decode($response, true);
+        return (json_last_error() === JSON_ERROR_NONE) ? $output : $response;
     }
 
-    public static function request(string $base, string $url, array $params = [], $data = null, array $headers = [], string $method = 'GET', array $options = [], $json = true)
+    public static function is_json($string) {
+        if (is_array($string))
+            return false;
+        json_decode($string);
+        return (json_last_error() == JSON_ERROR_NONE);
+    }
+    public static function request(string $base, string $url, array $params = [], $data = null, array $headers = [], string $method = 'GET', array $options = [])
     {
         $formattedHeaders = [];
         foreach ($headers as $index => $header)
@@ -149,6 +155,6 @@ class iCurl
                 $result =  static::other($method, $endpoint, $params, $data, $formattedHeaders, $options);
                 break;
         }
-        return $json ? static::json_decode($result) : $result;
+        return $result;
     }
 }
