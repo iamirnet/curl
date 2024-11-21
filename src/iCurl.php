@@ -58,7 +58,7 @@ class iCurl
         elseif(($http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE)) !== 200)
             return array_merge(['status' => false, 'code' => "h_".$http_code, 'message' => curl_error($curl)], $result);
         curl_close($curl);
-        return array_merge(['status' => true, 'code' => 200, 'message' => 'The operation was successful.', 'response' => static::json_decode($output)], $result);
+        return array_merge(['status' => true, 'code' => 200, 'message' => 'The operation was successful.', 'response' => $output], $result);
     }
 
     public static function post(string $url, array $params = [], $data = null, array $headers = [], array $options = [])
@@ -132,7 +132,7 @@ class iCurl
         json_decode($string);
         return (json_last_error() == JSON_ERROR_NONE);
     }
-    public static function request(string $base, string $url, array $params = [], $data = null, array $headers = [], string $method = 'GET', array $options = [])
+    public static function request(string $base, string $url, array $params = [], $data = null, array $headers = [], string $method = 'GET', array $options = [], $is_json = true)
     {
         $formattedHeaders = [];
         foreach ($headers as $index => $header)
@@ -155,6 +155,8 @@ class iCurl
                 $result =  static::other($method, $endpoint, $params, $data, $formattedHeaders, $options);
                 break;
         }
+        if ($is_json)
+            $result['response'] = static::json_decode($result['response']);
         return $result;
     }
 }
