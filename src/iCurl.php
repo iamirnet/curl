@@ -155,7 +155,7 @@ class iCurl
                 $result =  static::other($method, $endpoint, $params, $data, $formattedHeaders, $options);
                 break;
         }
-        if ($is_json)
+        if ($is_json && isset($result['response']))
             $result['response'] = static::json_decode($result['response']);
         return $result;
     }
