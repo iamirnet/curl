@@ -21,12 +21,10 @@ class iCurl
         }
         return $headers;
     }
-
     private static function endpoint(string $url, array $params = []): string
     {
         return count($params) ? ("{$url}?" . http_build_query($params, '', '&')) : $url;
     }
-
     private static function init(string $url, array $headers, array $options)
     {
         $curl = curl_init();
@@ -55,8 +53,9 @@ class iCurl
         $result['options'] = $options;
         if (curl_errno($curl))
             return array_merge(['status' => false, 'code' => -100, 'message' => curl_error($curl)], $result);
-        elseif(($http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE)) !== 200)
-            return array_merge(['status' => false, 'code' => "h_".$http_code, 'message' => curl_error($curl)], $result);
+        elseif(($http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE)) !== 200) {
+            return array_merge(['status' => false, 'code' => "h_" . $http_code, 'message' => curl_error($curl), 'response' => $output], $result);
+        }
         curl_close($curl);
         return array_merge(['status' => true, 'code' => 200, 'message' => 'The operation was successful.', 'response' => $output], $result);
     }
@@ -76,13 +75,13 @@ class iCurl
 
     public static function delete(string $url, array $params = [], $data = [], array $headers = [], array $options = [])
     {
-        return static::other('DELETE', ...func_num_args());
+        return static::other('DELETE', ...func_get_args());
     }
 
 
     public static function put(string $url, array $params = [], $data = [], array $headers = [], array $options = [])
     {
-        return static::other('PUT', ...func_num_args());
+        return static::other('PUT', ...func_get_args());
     }
 
     public static function other(string $method, string $url, array $params = [], $data = [], array $headers = [], array $options = [])
