@@ -1,5 +1,5 @@
-[![Latest Version](https://img.shields.io/github/release/iamirnet/xt.com.svg?style=flat-square)](https://github.com/iamirnet/xt.com/releases)
-[![GitHub last commit](https://img.shields.io/github/last-commit/iamirnet/xt.com.svg?style=flat-square)](#)
+[![Latest Version](https://img.shields.io/github/release/iamirnet/curl.svg?style=flat-square)](https://github.com/iamirnet/curl/releases)
+[![GitHub last commit](https://img.shields.io/github/last-commit/iamirnet/curl.svg?style=flat-square)](#)
 [![Packagist Downloads](https://img.shields.io/packagist/dt/iamirnet/curl.svg?style=flat-square)](https://packagist.org/packages/iamirnet/curl)
 
 # iCurl
@@ -357,3 +357,11 @@ i_curl_exists(string $base, string $url = '')
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+## Contribution
+- Give us a star :star:
+- Fork and Clone! Awesome
+- Select existing [issues](https://github.com/iamirnet/curl/issues) or create a [new issue](https://github.com/iamirnet/curl/issues/new) and give us a PR with your bugfix or improvement after. We love it ❤️
+
+## Donate
+- USDT Or TRX: TW5yoa21PJQe1dy1ErnCxh3kfpwDaivHQZ 😘❤
