@@ -51,7 +51,6 @@ Download and install composer:
 `composer require iamirnet/curl`
 ```php
 require 'vendor/autoload.php';
-// config by specifying api key and secret
 $service = new iAmirNet\Curl\iCurlService('https://api.example.com', ['Authorization' => 'Bearer token']);
 ```
 
