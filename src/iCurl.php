@@ -312,9 +312,13 @@ class iCurl
      */
     public static function get_content_type($headers)
     {
-        foreach ($headers as $index => $header)
-            if (strtolower($index) == 'content-type')
-                return $header;
+        foreach ($headers as $header)
+            if (strpos(strtolower($header), 'content-type') !== false)
+                try {
+                    return trim(explode(':', $header)[1]);
+                } catch (\Throwable $exception) {
+                    return $header;
+                }
         return false;
     }
 
