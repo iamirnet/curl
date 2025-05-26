@@ -52,13 +52,19 @@ class iCurl
     private static function init(string $url, array $headers, array $options)
     {
         $curl = curl_init();
+        $proxy = !empty($options['CURl_I_PROXY']) ? static::proxy($options['CURl_I_PROXY']) : false;
         unset($options['CURl_I_TYPE']);
+        unset($options['CURl_I_PROXY']);
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_HEADER, true);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+        if ($proxy) {
+            curl_setopt($curl, CURLOPT_PROXYTYPE, $proxy[0]);
+            curl_setopt($curl, CURLOPT_PROXY, $proxy[1]);
+        }
         curl_setopt_array($curl, $options);
         return $curl;
     }
