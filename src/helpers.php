@@ -174,3 +174,13 @@ if ( !function_exists('i_curl_proxy'))
         return \iAmirNet\Curl\iCurl::proxy($url);
     }
 }
+
+
+// Check if the 'i_curl_proxy' function already exists before declaring it
+if ( !function_exists('i_curl_random_ua'))
+{
+    function i_curl_random_ua(string $url)
+    {
+        return \iAmirNet\Curl\iCurl::randomUA($url);
+    }
+}

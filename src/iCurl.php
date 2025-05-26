@@ -79,7 +79,9 @@ class iCurl
      */
     private static function execute($curl, $request_headers, $options = [])
     {
+        $time = microtime(true);
         $response = curl_exec($curl);
+        $result['executed_time'] = round(microtime(true) - $time, 3);
         $request_info = curl_getinfo($curl);
         $header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
         $headers = static::headers2Array(substr($response, 0, $header_size));
@@ -397,5 +399,12 @@ class iCurl
                 return false;
         }
         return [$type, $address];
+    }
+
+    public static function randomUA()
+    {
+        return sprintf(
+            "Mozilla/5.0 (Windows NT %d.0; Win64; x64) AppleWebKit/537.%d (KHTML, like Gecko) Chrome/%d.0.%d.120 Safari/537.%d",
+            rand(6, 15), rand(36, 86), rand(90, 120), rand(2000, 6000), rand(36, 86));
     }
 }
