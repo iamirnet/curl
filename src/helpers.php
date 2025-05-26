@@ -164,3 +164,13 @@ if ( !function_exists('i_curl_exists'))
         return \iAmirNet\Curl\iCurl::exists($base . $url);
     }
 }
+
+
+// Check if the 'i_curl_proxy' function already exists before declaring it
+if ( !function_exists('i_curl_proxy'))
+{
+    function i_curl_proxy(string $url)
+    {
+        return \iAmirNet\Curl\iCurl::proxy($url);
+    }
+}

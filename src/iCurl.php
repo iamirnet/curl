@@ -362,4 +362,34 @@ class iCurl
             $result['response'] = static::json_decode($result['response']);
         return $result;
     }
+
+
+    public static function proxy($url)
+    {
+        $parsed = parse_url($url);
+        if (!isset($parsed['scheme'], $parsed['host'], $parsed['port']))
+            return false;
+
+        $scheme = strtolower($parsed['scheme']);
+        $host = $parsed['host'];
+        $port = $parsed['port'];
+
+        $address = "{$host}:{$port}";
+        switch ($scheme) {
+            case 'http':
+            case 'https':
+                $type = CURLPROXY_HTTP;
+                break;
+            case 'socks':
+            case 'socks5':
+                $type = CURLPROXY_SOCKS5;
+                break;
+            case 'socks4':
+                $type = CURLPROXY_SOCKS4;
+                break;
+            default:
+                return false;
+        }
+        return [$type, $address];
+    }
 }
