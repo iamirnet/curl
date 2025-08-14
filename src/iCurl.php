@@ -22,8 +22,10 @@ class iCurl
         $headers['http_status'] = array_shift($lines);
         foreach ($lines as $line) {
             if (!empty($line)) {
-                list($key, $value) = explode(': ', $line, 2);
-                $headers[$key] = $value;
+                try {
+                    list($key, $value) = explode(': ', $line, 2);
+                    $headers[$key] = $value;
+                }catch (\Throwable $exception){}
             }
         }
         return $headers;
@@ -85,8 +87,8 @@ class iCurl
         $request_info = curl_getinfo($curl);
         $header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
         $headers = static::headers2Array(substr($response, 0, $header_size));
-        $output = substr($response, $header_size);
 
+        $output = substr($response, $header_size);
         if (@$headers['content-encoding'] == "gzip")
             $output = zlib_decode($output);
 
