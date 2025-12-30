@@ -58,7 +58,6 @@ class iCurl
         unset($options['CURl_I_TYPE']);
         unset($options['CURl_I_PROXY']);
         curl_setopt($curl, CURLOPT_URL, $url);
-        //curl_setopt($curl, CURLOPT_HEADER, true);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
