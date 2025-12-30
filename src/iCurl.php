@@ -20,11 +20,11 @@ class iCurl
         $headers = array();
         $lines = explode("\r\n", $header);
         $headers['http_status'] = array_shift($lines);
-        foreach ($lines as $line) {
+        foreach ($lines as $index => $line) {
             if (!empty($line)) {
                 try {
-                    list($key, $value) = explode(': ', $line, 2);
-                    $headers[$key] = $value;
+                    $line = array_map('trim', explode(":", $line, 2));
+                    $headers[isset($line[1]) ? $line[0] : "header_{$index}"] = @$line[1]?:$line[0];
                 }catch (\Throwable $exception){}
             }
         }
@@ -58,7 +58,7 @@ class iCurl
         unset($options['CURl_I_TYPE']);
         unset($options['CURl_I_PROXY']);
         curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_HEADER, true);
+        //curl_setopt($curl, CURLOPT_HEADER, true);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
@@ -86,7 +86,7 @@ class iCurl
         $result['executed_time'] = round(microtime(true) - $time, 3);
         $request_info = curl_getinfo($curl);
         $header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
-        $headers = static::headers2Array(substr($response, 0, $header_size));
+        $headers = @$options[CURLOPT_HEADER] ? static::headers2Array(substr($response, 0, $header_size)) : [];
 
         $output = substr($response, $header_size);
         if (@$headers['content-encoding'] == "gzip")
