@@ -84,7 +84,7 @@ class iCurl
         $response = curl_exec($curl);
         $result['executed_time'] = round(microtime(true) - $time, 3);
         $request_info = curl_getinfo($curl);
-        $header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
+        $header_size = @$options[CURLOPT_HEADER] ? curl_getinfo($curl, CURLINFO_HEADER_SIZE) : 0;
         $headers = @$options[CURLOPT_HEADER] ? static::headers2Array(substr($response, 0, $header_size)) : [];
 
         $output = substr($response, $header_size);
