@@ -24,8 +24,9 @@ class iCurl
             if (!empty($line)) {
                 try {
                     $line = array_map('trim', explode(":", $line, 2));
-                    $headers[isset($line[1]) ? $line[0] : "header_{$index}"] = @$line[1]?:$line[0];
-                }catch (\Throwable $exception){}
+                    $headers[isset($line[1]) ? $line[0] : "header_{$index}"] = @$line[1] ?: $line[0];
+                } catch (\Throwable $exception) {
+                }
             }
         }
         return $headers;
@@ -58,9 +59,12 @@ class iCurl
         unset($options['CURl_I_TYPE']);
         unset($options['CURl_I_PROXY']);
         curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+        if (!isset($options[CURLOPT_RETURNTRANSFER]))
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        if (!isset($options[CURLOPT_SSL_VERIFYPEER]))
+            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+        if (!isset($options[CURLOPT_SSL_VERIFYHOST]))
+            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
         if ($proxy) {
             curl_setopt($curl, CURLOPT_PROXYTYPE, $proxy[0]);
@@ -88,7 +92,7 @@ class iCurl
         $headers = @$options[CURLOPT_HEADER] ? static::headers2Array(substr($response, 0, $header_size)) : [];
 
         $output = substr($response, $header_size);
-        if (@$headers['content-encoding'] == "gzip")
+        if (@$headers['content-encoding'] == "gzip" || @$request_headers['content-encoding'] == "gzip")
             $output = zlib_decode($output);
 
         $result['response_headers'] = $headers;
