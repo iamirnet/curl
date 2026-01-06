@@ -92,8 +92,10 @@ class iCurl
         $headers = @$options[CURLOPT_HEADER] ? static::headers2Array(substr($response, 0, $header_size)) : [];
 
         $output = substr($response, $header_size);
-        if (@$headers['content-encoding'] == "gzip" || @$request_headers['content-encoding'] == "gzip")
-            $output = zlib_decode($output);
+        try {
+            if (@$headers['content-encoding'] == "gzip" || str_contains(json_encode($request_headers), 'gzip'))
+                $output = zlib_decode($output);
+        }catch (\Throwable $exception){}
 
         $result['response_headers'] = $headers;
         $result['request_info'] = $request_info;
